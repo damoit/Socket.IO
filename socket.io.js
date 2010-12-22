@@ -1012,7 +1012,6 @@ JSONPPolling.xdomainCheck = function(){
 		io.util.merge(this.options, options);
 		this.connected = false;
 		this.connecting = false;
-		this.connectTimeoutTimer;
 		this._events = {};
 		this.transport = this.getTransport();
 		if (!this.transport && 'console' in window) console.error('No transport available');
@@ -1044,7 +1043,7 @@ JSONPPolling.xdomainCheck = function(){
 			this.transport.connect();
 			if (this.options.connectTimeout){
 				var self = this;
-				this.connectTimeoutTimer = setTimeout(function(){
+				setTimeout(function(){
 					if (!self.connected){
 						self.disconnect();
 						if (self.options.tryTransportsOnConnectTimeout && !self._rememberedTransport){
@@ -1087,9 +1086,6 @@ JSONPPolling.xdomainCheck = function(){
   }
 
 	Socket.prototype.disconnect = function(){
-	     // if disconnect was called after a successful connect but before the
-	     // connectTimeout timer fired, it will try to reconnect. Kill the timer just in case
-	    clearTimeout( this.connectTimeoutTimer ); 
 		this.transport.disconnect();
 		return this;
 	};
@@ -2099,7 +2095,6 @@ ASProxy.prototype =
     document.body.appendChild(container);
     // See this article for hasPriority:
     // http://help.adobe.com/en_US/as3/mobile/WS4bebcd66a74275c36cfb8137124318eebc6-7ffd.html
-    try{
     swfobject.embedSWF(
       WEB_SOCKET_SWF_LOCATION, "webSocketFlash",
       "1" /* width */, "1" /* height */, "9.0.0" /* SWF version */,
@@ -2108,7 +2103,6 @@ ASProxy.prototype =
         if (!e.success) console.error("[WebSocket] swfobject.embedSWF failed");
       }
     );
-    }catch(ex){}
     FABridge.addInitializationCallback("webSocket", function() {
       try {
         //console.log("[WebSocket] FABridge initializad");
